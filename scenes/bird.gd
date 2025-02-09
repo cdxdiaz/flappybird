@@ -17,6 +17,7 @@ func reset():
 	flying = false
 	position = START_POS
 	set_rotation(0)
+
 # Call every frame. 'delta' is the elapsed time since the previous frame
 func _physics_process(delta):
 	if flying or falling:
@@ -25,7 +26,7 @@ func _physics_process(delta):
 		if velocity.y > MAX_VEL:
 			velocity.y = MAX_VEL
 		if flying:
-			set_rotation(deg_to_rad(velocity.y * 0.5))
+			set_rotation(deg_to_rad(velocity.y * 0.05))
 			$AnimatedSprite2D.play()
 		elif falling:
 			set_rotation(PI/2)
