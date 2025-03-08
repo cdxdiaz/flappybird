@@ -27,6 +27,11 @@ func new_game():
 	game_over = false
 	score = 0
 	scroll = 0
+	$ScoreLabel.text = "SCORE : " + str(score)
+	$GameOver.hide()
+	get_tree().call_group("pipes", "queue_free")
+	pipes.clear()
+	generate_pipes()
 	$Bird.reset()
 
 func _input(event: InputEvent) -> void:
@@ -67,8 +72,13 @@ func generate_pipes():
 	pipe.position.x = screen_size.x + PIPE_DELAY
 	pipe.position.y = (screen_size.y - ground_height) / 2 + randi_range(-PIPE_RANGE, PIPE_RANGE)
 	pipe.hit.connect(bird_hit)
+	pipe.scored.connect(scored)
 	add_child(pipe)
 	pipes.append(pipe)
+	
+func scored():
+	score += 1
+	$ScoreLabel.text = "SCORE : " + str(score)
 
 func check_top():
 	if $Bird.position.y < 0:
@@ -77,9 +87,19 @@ func check_top():
 		
 func stop_game():
 	$PipeTimer.stop()
+	$GameOver.show()
 	$Bird.flying = false
 	game_running = false
 	game_over = true
 
 func bird_hit():
-	pass
+	$Bird.falling = true
+	stop_game()
+
+func _on_ground_hit() -> void:
+	$Bird.falling = false
+	stop_game()
+
+
+func _on_game_over_restart() -> void:
+	new_game()
